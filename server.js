@@ -11,13 +11,16 @@ const PORT = 5003;
 const cors = require('cors');
 app.use(cors());
 
-app.use(express.static('client'))
-
-//app.use(express.json());
+app.use(express.static('client'));
+app.use(express.json());
 
 // app.get('/', (req, res) => {
 //   return res.status(200).sendFile(path.resolve(__dirname, './client/index.html'));
 // })
+
+app.post('/flip', controller.fliplamp, (req, res) => {
+  return res.status(201).json('lamp flipped')
+})
 
 app.get('/on', controller.turnonlamp, (req, res) => {
   return res.status(201).json('lamp on now')

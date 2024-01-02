@@ -1,0 +1,47 @@
+
+60,000 ms in a minute
+3,600,000 ms in an hour
+86,400,000 ms in a day
+604,800,000 ms in a week
+
+if it's been more than 3 weeks, go thru the uuid process again:
+- get request to https://www.uuidtools.com/api/generate/v4
+- put that uuid into post request to https://wap.tplinkcloud.com
+    {
+    "method": "login",
+    "params": {
+        "appType": "Kasa_Android",
+        "cloudUserName": "liam.donaher@gmail.com",
+        "cloudPassword": "WifiOutlet:808",
+        "terminalUUID": "YOUR_UUID_HERE"
+      }
+    }
+- post request to https://eu-wap.tplinkcloud.com/?token=YOUR_TOKEN_HERE
+  {
+    “method”:”passthrough”,
+    “params”: {“deviceId”: “YOUR_DEVICE_ID_HERE”,
+    “requestData”: “{\”count_down\”:{\”get_rules\“:null}}” }
+  }
+
+
+PRIORITIES:
+- when page is loaded, and first snapshot is created, first get device status and see if the plug is connected. if not, set the current state to disconnected
+- HOSTING
+    - switch the app.js fetch requests to the actual website domain
+- error code -20651 means token expired: get another.
+- if flip doesn't come back with a sucess code, then it shouldn't rewrite the database lastflipped
+
+
+
+ISSUES:
+- two buttons aren't exactly the same width (since they're based on text length and each have different values)
+- the setInterval doesn't refreshe every second exactly, so every now and then it'll seem like its skipping a second to "catch up".
+
+
+RESOURCES:
+https://docs.joshuatz.com/random/tp-link-kasa/
+https://medium.com/the-prefect-blog/my-prefect-home-c05ebe625410
+https://itnerd.space/2017/06/19/how-to-authenticate-to-tp-link-cloud-api/
+https://itnerd.space/2017/05/21/how-to-get-the-tp-link-hs100-cloud-end-point-url/
+
+https://developer.mozilla.org/en-US/docs/Web/API/Crypto/randomUUID
