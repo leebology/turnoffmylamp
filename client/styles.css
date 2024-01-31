@@ -1,11 +1,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Oswald&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Agbalumo&family=Raleway:wght@100;200&display=swap');
 
-
 h1 {
   color: rgb(241, 241, 243);
   font-family: 'Oswald';
   font-size: 60px;
+}
+
+h3 {
+  color: rgb(241, 241, 243);
+  font-family: 'Oswald';
+  font-size: 30px;
+  margin: 0px;
+  margin-bottom: 10px;
 }
 
 body {
@@ -13,18 +20,24 @@ body {
   padding-left: 40px;
 }
 
-.lampbuttonon {
+.device-container {
+  outline: 0px solid white;
+  padding: 20px;
+}
+
+.lampbutton {
   font-size: 20px;
   font-family: 'Raleway';
   padding: 10px;
 }
 
-.lampbuttonon:hover {
-  background-color: rgb(231, 227, 227)
+.lampbutton:hover {
+  background-color: rgb(231, 227, 227);
+  cursor: pointer;
 }
 
 .datalabel {
-  color:rgb(255, 255, 255);
+  color: rgb(255, 255, 255);
   font-family: 'Raleway';
 }
 

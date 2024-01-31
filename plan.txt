@@ -1,8 +1,42 @@
+ON PAGE load:
+- client makes GET request to server
+- server responds with html page
+- server gets lamp status from API ("on_time" and "relay_state")
+- server updates database
+- client's onSnapshot gets data from database
 
-60,000 ms in a minute
-3,600,000 ms in an hour
-86,400,000 ms in a day
-604,800,000 ms in a week
+ON BUTTON CLICK:
+- client sends requst to server
+- server gets lamp status "on_time" and "relay_state"
+    - if turning on, but on already, then send res 1. for off, send res 2.
+
+- server sends "on" command to TP-LINK API
+    - if already on, send that in a response back to client
+    - if flip was success
+
+
+PRIORITIES:
+1. pressing button sends request to server, which sends request to API
+2. server makes change to database (which should update the onSnapshot)
+3. add in db doc of { timeFlip, on/off, name }
+
+STRETCH:
+- have TP-Link Router send a request to the server every time the device connects/disconnects from wifi.
+     - put smart outlet on its own wifi
+- have ON button grayed out and cursor have cross when lamp is already on. both grayed out when offline
+- when page is loaded, and first snapshot is created, first get device status and see if the plug is connected. if not, set the current state to disconnected
+- HOSTING
+    - switch the app.js fetch requests to the actual website domain
+- error code -20651 means token expired: get another.
+- if flip doesn't come back with a sucess code, then it shouldn't rewrite the database lastflipped
+- control color of smart bulb
+- put outlets on different wifi
+
+
+ISSUES:
+- two buttons aren't exactly the same width (since they're based on text length and each have different values)
+- the setInterval doesn't refreshe every second exactly, so every now and then it'll seem like its skipping a second to "catch up".
+
 
 if it's been more than 3 weeks, go thru the uuid process again:
 - get request to https://www.uuidtools.com/api/generate/v4
@@ -24,18 +58,99 @@ if it's been more than 3 weeks, go thru the uuid process again:
   }
 
 
-PRIORITIES:
-- when page is loaded, and first snapshot is created, first get device status and see if the plug is connected. if not, set the current state to disconnected
-- HOSTING
-    - switch the app.js fetch requests to the actual website domain
-- error code -20651 means token expired: get another.
-- if flip doesn't come back with a sucess code, then it shouldn't rewrite the database lastflipped
+  ////// STATUS WHILE ON ////////
 
+  {
+    "error_code": 0,
+    "result": {
+        "responseData": {
+            "system": {
+                "get_sysinfo": {
+                    "dev_name": "Smart Wi-Fi Plug Mini",
+                    "hw_ver": "5.0",
+                    "rssi": -40,
+                    "latitude_i": 423942,
+                    "err_code": 0,
+                    "obd_src": "tplink",
+                    "deviceId": "80066A2A877483A23D63A993CAA043A12162BC8C",
+                    "longitude_i": -711261,
+                    "mac": "5C:62:8B:A8:EC:C5",
+                    "icon_hash": "",
+                    "active_mode": "none",
+                    "updating": 0,
+                    "led_off": 0,
+                    "feature": "TIM",
+                    "on_time": 132,
+                    "relay_state": 1,
+                    "next_action": {
+                        "type": -1
+                    },
+                    "oemId": "211C91F3C6FA93568D818524FE170CEC",
+                    "alias": "Terrarium fan",
+                    "model": "HS103(US)",
+                    "hwId": "B25CBC5351DD892EA69AB42199F59E41",
+                    "mic_type": "IOT.SMARTPLUGSWITCH",
+                    "sw_ver": "1.0.8 Build 221011 Rel.195515",
+                    "status": "new"
+                }
+            },
+            "emeter": {
+                "err_msg": "module not support",
+                "err_code": -1
+            }
+        }
+    }
+}
 
+  ////// STATUS WHILE OFF ////////
+{
+    "error_code": 0,
+    "result": {
+        "responseData": {
+            "system": {
+                "get_sysinfo": {
+                    "dev_name": "Smart Wi-Fi Plug Mini",
+                    "hw_ver": "5.0",
+                    "rssi": -41,
+                    "latitude_i": 423942,
+                    "err_code": 0,
+                    "obd_src": "tplink",
+                    "deviceId": "80066A2A877483A23D63A993CAA043A12162BC8C",
+                    "longitude_i": -711261,
+                    "mac": "5C:62:8B:A8:EC:C5",
+                    "icon_hash": "",
+                    "active_mode": "none",
+                    "updating": 0,
+                    "led_off": 0,
+                    "feature": "TIM",
+                    "on_time": 0,
+                    "relay_state": 0,
+                    "next_action": {
+                        "type": -1
+                    },
+                    "oemId": "211C91F3C6FA93568D818524FE170CEC",
+                    "alias": "Terrarium fan",
+                    "model": "HS103(US)",
+                    "hwId": "B25CBC5351DD892EA69AB42199F59E41",
+                    "mic_type": "IOT.SMARTPLUGSWITCH",
+                    "sw_ver": "1.0.8 Build 221011 Rel.195515",
+                    "status": "new"
+                }
+            },
+            "emeter": {
+                "err_msg": "module not support",
+                "err_code": -1
+            }
+        }
+    }
+}
 
-ISSUES:
-- two buttons aren't exactly the same width (since they're based on text length and each have different values)
-- the setInterval doesn't refreshe every second exactly, so every now and then it'll seem like its skipping a second to "catch up".
+    ////// STATUS WHILE DISCONNECTED ////////
+
+{
+    "error_code": -20002,
+    "msg": "Request timeout"
+}
 
 
 RESOURCES:
@@ -43,5 +158,7 @@ https://docs.joshuatz.com/random/tp-link-kasa/
 https://medium.com/the-prefect-blog/my-prefect-home-c05ebe625410
 https://itnerd.space/2017/06/19/how-to-authenticate-to-tp-link-cloud-api/
 https://itnerd.space/2017/05/21/how-to-get-the-tp-link-hs100-cloud-end-point-url/
+https://www.tp-link.com/us/support/gpl-code/ 
+    - source code for router. mine: Archer AX21
 
 https://developer.mozilla.org/en-US/docs/Web/API/Crypto/randomUUID

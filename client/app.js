@@ -41,16 +41,9 @@ const lastfliplabel = document.getElementById('lastfliplabel');
 //2nd parameter is callback function that runs once initially and then again whenever collection changes
  
 onSnapshot(lampCol, (snapshot) => {
-  // console.log("------snapshot.docs[0].data()")
-  // console.log(snapshot.docs[0].data())
-  // console.log("------snapshot.docs[0].data().lastflip")
-  // console.log(snapshot.docs[0].data().lastflip)
-  // console.log("------snapshot.docs[0].id")
-  // console.log(snapshot.docs[0].id)
-
   lampId = snapshot.docs[0].id;
   lampLastFlip = snapshot.docs[0].data().lastflip;
-  console.log('------lampLastFlip:  ', lampLastFlip);
+  //console.log('------lampLastFlip:  ', lampLastFlip);
   lampLit = snapshot.docs[0].data().lit;
   lampRef = doc(db, 'lamp', lampId);
 
@@ -100,18 +93,17 @@ const refreshLastFlip = () => {
 setInterval(refreshLastFlip, 1000);
 
 const lampButtonOn = document.getElementById('lampbuttonon');
-const lampButtonOff = document.getElementById('lampbuttonon');
 lampButtonOn.addEventListener('click', () => {
-  //console.log('on button pressed')
   asyncFlip({value: true});
 })
+const lampButtonOff = document.getElementById('lampbuttonoff');
 lampButtonOff.addEventListener('click', () => {
-  //console.log('off button pressed')
   asyncFlip({value: false});
 })
 
 //does this need to be an async function??
 async function asyncFlip(data) {
+  console.log('pressed: ', data.value)
   fetch('http://localhost:5003/flip', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -121,11 +113,11 @@ async function asyncFlip(data) {
       if (!res.ok) {
         throw new Error(`HTTP error in asyncFLip! Status: ${res.status}`);
       }
-      console.log('-----client side res.locals');
-      console.log(res.locals);
       return res.json();
     })
     .then((data) => {
+      console.log('app res data: ', data)
+      //updating doc should be done server-side, and response should just be whether you tried to turn it on when its on already
       updateDoc(lampRef, {
         lastflip: Date.now(),
         lit: 'on',
@@ -134,33 +126,3 @@ async function asyncFlip(data) {
     })
     .catch((err) => console.log('Error in lampButtonOn fetch call: ', err));
 };
-
-
-
-// const lampButtonOff = document.getElementById('lampbuttonoff');
-// lampButtonOff.addEventListener('click', (e) => {
-//   fetch('http://localhost:5003/off', {
-//     method: 'GET',
-//     headers: { 'Content-Type': 'application/json' },
-//   })
-//     .then((res) => {
-//       if (!res.ok) {
-//         throw new Error(`HTTP error! Status: ${res.status}`);
-//       }
-//       return res.json();
-//     })
-//     .then((data) => {
-//       console.log('Success:', data);
-//     })
-//     .catch((err) => console.log('Error in lampButtonOn fetch call: ', err));
-
-//   updateDoc(lampRef, {
-//     // lastflip: new Date().getTime(),
-//     lastflip: 0,
-//     lit: 'off',
-//   });
-// });
-
-// async function turnLampOn() {
-//   const response = await fetch('/');
-// }
