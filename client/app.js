@@ -83,7 +83,8 @@ lampButtonOff.addEventListener('click', () => {
 //does this need to be an async function??
 async function asyncFlip(data) {
   console.log('pressed: ', data.value);
-  fetch('http://localhost:5004/flip', {
+  // fetch('http://localhost:5004/flip', {
+  fetch('/flip', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
