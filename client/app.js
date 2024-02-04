@@ -1,45 +1,59 @@
-//brower/client-side needs a path to import. you can't just do " import * from 'firebase' "
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js';
-// import { initializeApp } from 'firebase/app';
-import {
-  getFirestore,
-  collection,
-  onSnapshot,
-  doc,
-  updateDoc,
-} from 'https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js';
-//import { getFirestore, collection, onSnapshot, doc, updateDoc } from 'firebase/firestore';
+import { db, collection, onSnapshot, doc, updateDoc } from './firebase';
+import './styles.css';
 
-
-const firebaseConfig = {
-  apiKey: "AIzaSyDnTKW_iZaYmlRcTsQilcI12e7pYuDYNWA",
-  authDomain: "turnoffmylamp.firebaseapp.com",
-  databaseURL: "https://turnoffmylamp-default-rtdb.firebaseio.com",
-  projectId: "turnoffmylamp",
-  storageBucket: "turnoffmylamp.appspot.com",
-  messagingSenderId: "62228671624",
-  appId: "1:62228671624:web:1b9294652e14bb05bec33d",
-  measurementId: "G-560J1TS43B"
-};
-
-// Initialize Firebase
-const myApp = initializeApp(firebaseConfig);
-const db = getFirestore(myApp);
+// import iro from '@jaames/iro';
+// let colorWheel = new iro.ColorPicker('#colorWheelDemo', {
+//   // options here
+// });
 
 const lampCol = collection(db, 'lamp'); //collection reference
 
-let lampId;
-let lampLastFlip;
-let lampLit;
-
+let lampId, lampLastFlip, lampLit;
 let lampRef;
 
 const lastFlipText = document.getElementById('lastflip');
 const currentStateText = document.getElementById('currentlampstate');
 const lastfliplabel = document.getElementById('lastfliplabel');
 
+const refreshLastFlip = () => {
+  const currTime = Date.now();
+  let ms = Date.now() - lampLastFlip;
+  const weeks = Math.floor(ms / 604800000);
+  ms -= weeks * 604800000;
+  const days = Math.floor(ms / 86400000);
+  ms -= days * 86400000;
+  const hours = Math.floor(ms / 3600000);
+  ms -= hours * 3600000;
+  const minutes = Math.floor(ms / 60000);
+  ms -= minutes * 60000;
+  const seconds = Math.floor(ms / 1000);
+
+  let timeStr = '';
+  if (weeks) {
+    if (weeks > 1) timeStr += `${weeks} weeks, `;
+    else timeStr += '1 week, ';
+  }
+  if (days) {
+    if (days > 1) timeStr += `${days} days, `;
+    else timeStr += '1 day, ';
+  }
+  if (hours) {
+    if (hours > 1) timeStr += `${hours} hours, `;
+    else timeStr += '1 hour, ';
+  }
+  if (minutes) {
+    if (minutes > 1) timeStr += `${minutes} minutes, `;
+    else timeStr += '1 minute, ';
+  }
+  if (seconds === 1) timeStr += `1 second`;
+  else timeStr += `${seconds} seconds`;
+
+  lastFlipText.innerText = timeStr;
+};
+
+setInterval(refreshLastFlip, 1000);
+
 //2nd parameter is callback function that runs once initially and then again whenever collection changes
- 
 onSnapshot(lampCol, (snapshot) => {
   lampId = snapshot.docs[0].id;
   lampLastFlip = snapshot.docs[0].data().lastflip;
@@ -49,62 +63,27 @@ onSnapshot(lampCol, (snapshot) => {
 
   refreshLastFlip();
   //lastFlipText.innerText = '';
-  if (currentStateText.innerText === true) lastfliplabel.innerText = 'lamp has been on for:'
-  else if (currentStateText.innerText === false) lastfliplabel.innerText = 'lamp has been off for:'
+  if (currentStateText.innerText === true)
+    lastfliplabel.innerText = 'lamp has been on for:';
+  else if (currentStateText.innerText === false)
+    lastfliplabel.innerText = 'lamp has been off for:';
   currentStateText.innerText = lampLit;
 });
 
-const refreshLastFlip = () => {
-  const currTime = Date.now();
-  let ms = Date.now() - lampLastFlip;
-  const weeks = Math.floor(ms/604800000);
-  ms -= weeks * 604800000
-  const days = Math.floor(ms/86400000);
-  ms -= days * 86400000
-  const hours = Math.floor(ms/3600000);
-  ms -= hours * 3600000
-  const minutes = Math.floor(ms/60000);
-  ms -= minutes * 60000
-  const seconds = Math.floor(ms/1000);
-
-  let timeStr = ''
-  if (weeks) {
-    if (weeks > 1) timeStr += `${weeks} weeks, `
-    else timeStr += '1 week, '
-  }
-  if (days) {
-    if (days > 1) timeStr += `${days} days, `
-    else timeStr += '1 day, '
-  }
-  if (hours) {
-    if (hours > 1) timeStr += `${hours} hours, `
-    else timeStr += '1 hour, '
-  }
-  if (minutes) {
-    if (minutes > 1) timeStr += `${minutes} minutes, `
-    else timeStr += '1 minute, '
-  }
-  if (seconds === 1) timeStr += `1 second`
-  else timeStr += `${seconds} seconds`
-
-  lastFlipText.innerText = timeStr;
-};
-
-setInterval(refreshLastFlip, 1000);
 
 const lampButtonOn = document.getElementById('lampbuttonon');
 lampButtonOn.addEventListener('click', () => {
-  asyncFlip({value: true});
-})
+  asyncFlip({ value: true });
+});
 const lampButtonOff = document.getElementById('lampbuttonoff');
 lampButtonOff.addEventListener('click', () => {
-  asyncFlip({value: false});
-})
+  asyncFlip({ value: false });
+});
 
 //does this need to be an async function??
 async function asyncFlip(data) {
-  console.log('pressed: ', data.value)
-  fetch('http://localhost:5003/flip', {
+  console.log('pressed: ', data.value);
+  fetch('http://localhost:5004/flip', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
@@ -116,13 +95,7 @@ async function asyncFlip(data) {
       return res.json();
     })
     .then((data) => {
-      console.log('app res data: ', data)
-      //updating doc should be done server-side, and response should just be whether you tried to turn it on when its on already
-      updateDoc(lampRef, {
-        lastflip: Date.now(),
-        lit: 'on',
-      })
-      console.log('Success:', data);
+      console.log('response from server: ', data);
     })
     .catch((err) => console.log('Error in lampButtonOn fetch call: ', err));
-};
+}

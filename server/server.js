@@ -6,22 +6,16 @@ const express = require('express');
 const app = express();
 const path = require('path');
 const tpcontroller = require('./tplink-controller.js');
-const PORT = 5003;
+const fbcontroller = require('./firebase-controller.js');
+const PORT = 5004;
 
 const cors = require('cors');
 app.use(cors());
 
+fbcontroller.getcurrtoken();
 
-
-
-//get status from plug to see if its on or off or disconnected
-
-// app.use(tpcontroller.lampstatus, (req, res, next) => {
-//   console.log('lamp status')
-//   next();
-// })
-
-app.use(express.static('client'));
+//app.use(express.static('client')); //this is how i served static files without webpack
+app.use(express.static(path.join(__dirname, 'dist'))); //this is the way to serve static files with webpack
 app.use(express.json());
 
 // app.get('/', (req, res) => {
@@ -31,14 +25,6 @@ app.use(express.json());
 app.post('/flip', tpcontroller.fliplamp, (req, res) => {
   return res.status(201).json('lamp flipped')
 })
-
-// app.get('/on', tpcontroller.turnonlamp, (req, res) => {
-//   return res.status(201).json('lamp on now')
-// })
-
-// app.get('/off', tpcontroller.turnofflamp, (req, res) => {
-//   return res.status(201).json('lamp off now')
-// })
 
 app.use((err, req, res, next) => {
   const defaultErr = {
@@ -52,5 +38,5 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Server listening on port: ${PORT}...`);
+  console.log(`Server listening on port: ${PORT}...\n 🔆 Time to get lit 🔆`);
 });

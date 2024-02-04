@@ -15,10 +15,10 @@ ON BUTTON CLICK:
     - if flip was success
 
 
-PRIORITIES:
-1. pressing button sends request to server, which sends request to API
-2. server makes change to database (which should update the onSnapshot)
-3. add in db doc of { timeFlip, on/off, name }
+TO DO EVENTUALLY:
+- get a new token (stored in tplink controller?)
+- put personal info in .env (and placeholders in env.example)
+- post this as a new public github repo, so the old branches won't show up with my personal info on them
 
 STRETCH:
 - have TP-Link Router send a request to the server every time the device connects/disconnects from wifi.
@@ -31,6 +31,7 @@ STRETCH:
 - if flip doesn't come back with a sucess code, then it shouldn't rewrite the database lastflipped
 - control color of smart bulb
 - put outlets on different wifi
+- change firebase rules (https://console.firebase.google.com/u/1/project/turnoffmylamp/firestore/rules) to something other than totally open access
 
 
 ISSUES:
@@ -152,6 +153,10 @@ if it's been more than 3 weeks, go thru the uuid process again:
     "msg": "Request timeout"
 }
 
+    ////// RESPONSE FROM API WHEN TOKEN EXPIRES ////////
+{"error_code":-20651,"msg":"Token expired"}
+    ////// RESPONSE FROM API WHEN NO TOKEN PROVIDED ////////
+{ error_code: -20104, msg: "Parameter doesn't exist" }
 
 RESOURCES:
 https://docs.joshuatz.com/random/tp-link-kasa/
