@@ -31,8 +31,14 @@ body {
   padding: 10px;
 }
 
+.lampbutton:disabled {
+  background: #999;
+  color:#555;
+  pointer-events: none;
+}
+
 .lampbutton:hover {
-  background-color: rgb(231, 227, 227);
+  background-color: #CCC;
   cursor: pointer;
 }
 

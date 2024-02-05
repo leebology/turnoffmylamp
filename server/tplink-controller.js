@@ -53,7 +53,7 @@ controller.newtoken = async (req, res, next) => {
 controller.fliplamp = async (req, res, next) => {
 
   let flipReq = req.body.value;
-  console.log('-----FLIP REQUEST TO: ', flipReq)
+  console.log('-----FLIP REQUEST TO: ', flipReq, ' at ', new Date())
 
   if (!token) {
     console.log('awaiting token from fb')

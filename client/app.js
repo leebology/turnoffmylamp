@@ -1,5 +1,5 @@
 import { db, collection, onSnapshot, doc, updateDoc } from './firebase';
-import './styles.css';
+import './styles.css'; //webpack will see this and inject css. dont put css link in the html file directly.
 
 // import iro from '@jaames/iro';
 // let colorWheel = new iro.ColorPicker('#colorWheelDemo', {
@@ -62,12 +62,18 @@ onSnapshot(lampCol, (snapshot) => {
   lampRef = doc(db, 'lamp', lampId);
 
   refreshLastFlip();
-  //lastFlipText.innerText = '';
-  if (currentStateText.innerText === true)
+  
+  if (lampLit === 'on') {
     lastfliplabel.innerText = 'lamp has been on for:';
-  else if (currentStateText.innerText === false)
+    lampButtonOn.disabled = true;
+    lampButtonOff.disabled = false;
+  } else if (lampLit === 'off') {
     lastfliplabel.innerText = 'lamp has been off for:';
+    lampButtonOn.disabled = false;
+    lampButtonOff.disabled = true;
+  }
   currentStateText.innerText = lampLit;
+  console.log('finished onSnapshot')
 });
 
 
