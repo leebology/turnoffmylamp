@@ -1,4 +1,4 @@
-import { db, collection, onSnapshot, doc, updateDoc } from './firebase';
+import { db, collection, onSnapshot, doc, updateDoc } from '../firebase';
 import './styles.css'; //webpack will see this and inject css. dont put css link in the html file directly.
 
 // import iro from '@jaames/iro';
