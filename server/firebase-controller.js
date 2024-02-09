@@ -1,5 +1,5 @@
 const { initializeApp } = require('firebase/app');
-const { getFirestore, doc, updateDoc, getDoc, collection } = require('firebase/firestore');
+const { getFirestore, doc, addDoc, updateDoc, getDoc, collection } = require('firebase/firestore');
 
 const firebaseConfig = {
   apiKey: "AIzaSyDnTKW_iZaYmlRcTsQilcI12e7pYuDYNWA",
@@ -15,11 +15,7 @@ const firebaseConfig = {
 //initializeApp(firebaseConfig);
 //admin.initializeApp(firebaseConfig);
 const dbapp = initializeApp(firebaseConfig);
-
 const db = getFirestore(dbapp);
-
-
-const lampCol = collection(db, 'lamp');
 
 const express = require('express');
 const app = express();
@@ -33,24 +29,43 @@ controller.token = '';
 
 //do these need to be declared as variables?
 lampRef = doc(db, 'lamp', 'R3EoXUVxaRX4Vy1IK0Yo');
+interactionsRef = collection(db, 'lamp/R3EoXUVxaRX4Vy1IK0Yo/interactions')
 tokenRef = doc(db, 'token', 'KySruQOo92Kmx9L1jjoa');
-let token = '';
+//let token = '';
 
 controller.fliplamp = async (req, res, next) => {
+  req.action ? litState = 'on' : litState = 'off'
+  //CHANGE LIT VALUE
   try {
-    //req will be true or false
-    req ? litState = 'on' : litState = 'off'
     updateDoc(lampRef, {
       lastflip: Date.now(),
       lit: litState,
     });
-  } catch (err) {
+  } catch (error) {
     return next({
-      log: 'error handler caught error when trying to flip lamp in fbcontroller.fliplamp',
+      log: 'error handler caught error in fbcontroller.fliplamp',
       status: 500,
       message: {error: 'flippy no workey'}
     })
   }
+  console.log('added flip, attempting to add interaction')
+  //ADD INTERACTION LOG
+  try { 
+    addDoc(interactionsRef, {
+      action: req.action,
+      time: Date.now(),
+      alias: req.alias,
+    })
+    console.log('### added interaction!')
+
+  } catch (error) {
+    return next({
+      log: 'error handler caught error when adding an interaction',
+      status: 500,
+      message: {error: 'couldn\'t add interaction'}
+    })
+  }
+  console.log('added interaction?')
 }
 
 controller.getcurrtoken = async () => {

@@ -28,14 +28,14 @@ const Plug = () => {
   //STATE
   const [PlugInfo, setPlugInfo] = useState({
     lastFlipText: '-',
-    lastFlipLabel: 'lamp has been on for:',
+    lastFlipLabel: 'Lamp has been on for:',
     currentLampState: '-',
     onButtonDisable: false,
     offButtonDisable: false
   });
 
   const handlePlugInfoChange = (key, value) => {
-    setPlugInfo(prevState => ({
+      setPlugInfo(prevState => ({
       ...prevState,
       [key]: value
     }));
@@ -82,25 +82,25 @@ const Plug = () => {
     const intervalId = setInterval(() => {
       refreshLastFlip();
       //console.log('just refreshed lastFlip')
-    }, 2000);
+    }, 1000);
     return () => clearInterval(intervalId);
   }, []);
 
 
   useEffect(() => {
-    const unsubscribe = onSnapshot(plugCol, (snapshot) => {
-      handlePlugInfoChange('lastButtonPress', snapshot.docs[0].data().lastflip);
-      const lampLit = snapshot.docs[0].data().lit;
-      lastFlipRef.current = snapshot.docs[0].data().lastflip;
+    const unsubscribe = onSnapshot(plugDoc, (snapshot) => {
+      handlePlugInfoChange('lastButtonPress', snapshot.data().lastflip);
+      const lampLit = snapshot.data().lit;
+      lastFlipRef.current = snapshot.data().lastflip;
       refreshLastFlip();
       
       if (lampLit === 'on') {
-        handlePlugInfoChange('lastFlipLabel', 'lamp has been on for:');
+        handlePlugInfoChange('lastFlipLabel', 'Lamp has been on for:');
         handlePlugInfoChange('onButtonDisable', true);
-        handlePlugInfoChange('offButtonDisable', false);
+        setTimeout(() => handlePlugInfoChange('offButtonDisable', false), 0);
       } else if (lampLit === 'off') {
-        handlePlugInfoChange('lastFlipLabel', 'lamp has been off for:');
-        handlePlugInfoChange('onButtonDisable', false);
+        handlePlugInfoChange('lastFlipLabel', 'Lamp has been off for:');
+        setTimeout(() => handlePlugInfoChange('onButtonDisable', false), 0);
         handlePlugInfoChange('offButtonDisable', true);
       }
       handlePlugInfoChange('currentLampState', lampLit)
@@ -113,6 +113,8 @@ const Plug = () => {
   //should this be upgraded to try/catch?
   async function asyncFlip(data) {
     console.log('pressed: ', data.value);
+    handlePlugInfoChange('onButtonDisable', true);
+    handlePlugInfoChange('offButtonDisable', true);
     fetch('/flip', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -131,11 +133,11 @@ const Plug = () => {
   }
 
   return (
-    <div className="device-container">
+    <div>
       <h3>smart outlet</h3>
       <div>
-        <button className="lampbutton" disabled={PlugInfo.onButtonDisable} onClick={() => asyncFlip({ value: true })}>turn on my lamp</button>
-        <button className="lampbutton" disabled={PlugInfo.offButtonDisable} onClick={() => asyncFlip({ value: false })}>turn off my lamp</button>
+        <button className="lampbutton" disabled={PlugInfo.onButtonDisable} onClick={() => asyncFlip({ value: true, alias: 'bilbo' })}>turn on my lamp</button>
+        <button className="lampbutton" disabled={PlugInfo.offButtonDisable} onClick={() => asyncFlip({ value: false, alias: 'baggypants' })}>turn off my lamp</button>
       </div>
       <br/>
       <div>

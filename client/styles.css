@@ -21,7 +21,7 @@ body {
 }
 
 .device-container {
-  outline: 0px solid white;
+  outline: 1px solid white;
   padding: 20px;
 }
 

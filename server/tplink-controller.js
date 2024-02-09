@@ -52,8 +52,13 @@ controller.newtoken = async (req, res, next) => {
 
 controller.fliplamp = async (req, res, next) => {
 
-  let flipReq = req.body.value;
-  console.log('-----FLIP REQUEST TO: ', flipReq, ' at ', new Date())
+  //let flipReq = req.body.value; //OLD VARIABLE USED TO BE A BOOLEAN. NOW AN OBJECT
+  let flipReq = {
+    action: req.body.value,
+    alias: req.body.alias
+  }
+  //console.log('-----FLIP REQUEST TO: ', flipReq, ' at ', new Date()) //OLD
+  console.log('-----FLIP REQUEST BY ', flipReq.alias, ' TO ', flipReq.action, ' AT ', new Date())
 
   if (!token) {
     console.log('awaiting token from fb')
@@ -68,17 +73,16 @@ controller.fliplamp = async (req, res, next) => {
       method: 'passthrough',
       params: {
         deviceId: plugId,
-        requestData: `{"system":{"set_relay_state":{"state":${flipReq}}}}`,
+        requestData: `{"system":{"set_relay_state":{"state":${flipReq.action}}}}`,
       },
     }),
   };
 
   try {
+    //console.log('request to TPLINK: ', `${posturl}?token=${token}`, postBody);
     const fetchResponse = await fetch(`${posturl}?token=${token}`, postBody);
     const jsonResponse = await fetchResponse.json();
-
-    // console.log('Controller.fliplamp Response: ')
-    // console.log(jsonResponse)
+    //console.log('### jsonResponse: ', jsonResponse)
 
     //error_code -20651 for token expired
     if (jsonResponse.error_code === -20651) {
@@ -102,9 +106,9 @@ controller.fliplamp = async (req, res, next) => {
         const fetchResponse2 = await fetch(`${posturl}?token=${token}`, postBody);
         const jsonResponse2 = await fetchResponse2.json();
         res.json(jsonResponse2); 
-        console.log('FINAL RES 2: ', jsonResponse2)
+        console.log('FINAL RES with new token: ', jsonResponse2)
       } else {
-        console.log('token is expired, but i feel like i ~just got a new one')
+        console.log('token is expired, but i just got a new one within the last ~week so idk what happened')
       }
       //error_code -20002 for request timeout (likely plug is not plugged in)
     } else if (jsonResponse.error_code === -20002) {
@@ -120,7 +124,7 @@ controller.fliplamp = async (req, res, next) => {
     }
   } catch (error) {
     return next({
-      log: 'error handler caught error when trying to flip lamp',
+      log: 'error handler caught error in tpcontroller.fliplamp',
       status: 500,
       message: {error: 'flippy no workey'}
     })
