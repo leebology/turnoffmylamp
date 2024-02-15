@@ -48,13 +48,12 @@ controller.fliplamp = async (req, res, next) => {
       message: {error: 'flippy no workey'}
     })
   }
-  console.log('added flip, attempting to add interaction')
   //ADD INTERACTION LOG
   try { 
     addDoc(interactionsRef, {
       action: req.action,
       time: Date.now(),
-      alias: req.alias,
+      alias: req.alias ? req.alias : '',
     })
     console.log('### added interaction!')
 
@@ -65,7 +64,6 @@ controller.fliplamp = async (req, res, next) => {
       message: {error: 'couldn\'t add interaction'}
     })
   }
-  console.log('added interaction?')
 }
 
 controller.getcurrtoken = async () => {

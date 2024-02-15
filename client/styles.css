@@ -1,10 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Oswald&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Agbalumo&family=Raleway:wght@100;200&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Agbalumo&family=Raleway:wght@100;200&family=Roboto+Mono:wght@300&display=swap');
 
 h1 {
   color: rgb(241, 241, 243);
   font-family: 'Oswald';
-  font-size: 60px;
+  font-size: 13vw;
+  margin-top: 20px;
 }
 
 h3 {
@@ -16,19 +18,28 @@ h3 {
 }
 
 body {
-  background-color: rgb(8, 38, 83);
-  padding-left: 40px;
+  background-color: #082653;
+  padding-left: 10px;
 }
 
 .device-container {
   outline: 1px solid white;
+  max-width: 700px;
   padding: 20px;
+  padding-left: 5px;
+  gap: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-radius: 5px
 }
 
 .lampbutton {
   font-size: 20px;
   font-family: 'Raleway';
   padding: 10px;
+  margin: 3px;
+  border-radius: 4px
 }
 
 .lampbutton:disabled {
@@ -47,13 +58,121 @@ body {
   font-family: 'Raleway';
 }
 
+.datalabel-action-log {
+  color: rgb(255, 255, 255);
+  font-family: 'Raleway';
+  display: flex;
+  justify-content: left;
+}
+
 .lastflip {
-  color: rgb(166, 166, 255);
+  color: #a6a6ff;
   font-family: 'Oswald';
 }
 
 .currentlampstate {
-  color: rgb(166, 166, 255);
   font-family: 'Oswald';
   font-size: 20px;
+}
+
+.plug-container {
+  outline: 0px dotted green;
+}
+
+.action-log-container {
+  outline: 0px dotted red;
+}
+
+#action-log {
+  color: rgb(166, 166, 255);
+  line-height: 10%;
+  padding-top: 0px;
+  padding-left: 0px;
+  padding-bottom: 0px;
+  margin: 0px;
+  list-style-type: none;
+  width: 330px;
+
+  max-height: 94px;
+  overflow: hidden;
+  transition: max-height 0.5s ease-out;
+}
+
+#action-log.expanded {
+  max-height: 200px;
+  background-color: #071f45;
+  overflow-y: auto;
+
+}
+
+.indiv-action {
+  font-size: 15px;
+  transform: scaleX(0.8);
+  transform-origin: left;
+  text-align: left;
+  font-family: 'Roboto Mono', monospace;
+  margin-bottom: 0px;
+  line-height: 0.8;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.indiv-action-text {
+  line-height: 0.8
+}
+
+#toggle-log {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  color: rgb(166, 166, 255);
+  font-family: 'Oswald';
+  font-size: 15px;
+  padding: 5px;
+  padding-top: 0px;
+  padding-left: 5px;
+
+  float: left;
+}
+
+#toggle-log:hover {
+  color: #fff;
+}
+
+#alias-input {
+  margin-left: 5px;
+}
+
+@media (min-width: 600px) {
+  .device-container {
+    flex-direction: row;
+    padding-left: 20px;
+  }
+  .datalabel-action-log {
+    justify-content: center;
+  }
+  body {
+    padding-left: 40px;
+  }
+  h1 {
+    font-size: 80px;
+  }
+}
+
+.mui-bulb {
+  fill: rgba(166, 166, 255, 0);
+  padding-right: 5px;
+}
+
+svg {
+  /* Ensure SVG has fixed dimensions and doesn't grow or shrink */
+  width: 24px;  /* or the size you want */
+  height: 24px; /* or the size you want */
+  flex-shrink: 0; /* Prevents the SVG from shrinking */
 }

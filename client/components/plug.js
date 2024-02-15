@@ -33,6 +33,7 @@ const Plug = () => {
     onButtonDisable: false,
     offButtonDisable: false
   });
+  const [aliasInput, setAliasInput] = useState();
 
   const handlePlugInfoChange = (key, value) => {
       setPlugInfo(prevState => ({
@@ -134,16 +135,26 @@ const Plug = () => {
 
   return (
     <div>
-      <h3>smart outlet</h3>
+      {/* <h3>smart outlet</h3> */}
       <div>
-        <button className="lampbutton" disabled={PlugInfo.onButtonDisable} onClick={() => asyncFlip({ value: true, alias: 'bilbo' })}>turn on my lamp</button>
-        <button className="lampbutton" disabled={PlugInfo.offButtonDisable} onClick={() => asyncFlip({ value: false, alias: 'baggypants' })}>turn off my lamp</button>
+
+      </div>
+      <div>
+        <button className="lampbutton" disabled={PlugInfo.onButtonDisable} onClick={() => asyncFlip({ value: true, alias: aliasInput})}>turn on my lamp</button>
+        <button className="lampbutton" disabled={PlugInfo.offButtonDisable} onClick={() => asyncFlip({ value: false, alias: aliasInput})}>turn off my lamp</button>
       </div>
       <br/>
       <div>
+        <form>
+          <label className="datalabel">enter name for action log?</label>
+          <input id="alias-input" onChange={e => setAliasInput(e.target.value)}></input>
+        </form>
+        <br />
         <div className="datalabel">{PlugInfo.lastFlipLabel}</div><div className="lastflip">{PlugInfo.lastFlipText}</div>
         <br/>
-        <div className="datalabel">Current state: </div> <div className="currentlampstate">{PlugInfo.currentLampState}</div>
+        <div className="datalabel">Current state: </div> <div className="currentlampstate" style={{ color: `${PlugInfo.currentLampState === 'on' ? '#f6aa38' : '#a6a6ff'}` }}>{PlugInfo.currentLampState}</div>
+        
+        
       </div>
     </div>
   );
