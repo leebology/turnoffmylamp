@@ -4,7 +4,8 @@
   "description": "you can also turn on my lamp",
   "main": "server/server.js",
   "scripts": {
-    "start": "nodemon server/server.js",
+    "start": "node server/server.js",
+    "nodemon": "nodemon server/server.js",
     "dev": "concurrently \"webpack serve --mode development --open\" \"nodemon server/server.js\"",
     "build": "webpack --mode production"
   },
