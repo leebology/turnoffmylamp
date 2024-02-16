@@ -15,12 +15,8 @@ app.use(cors());
 fbcontroller.getcurrtoken();
 
 //app.use(express.static('client')); //this is how i served static files without webpack
-app.use(express.static(path.join(__dirname, 'dist'))); //this is the way to serve static files with webpack
+app.use(express.static(path.join(__dirname, '..', 'dist'))); //this is the way to serve static files with webpack
 app.use(express.json());
-
-// app.get('/', (req, res) => {
-//   return res.status(200).sendFile(path.resolve(__dirname, './client/index.html'));
-// })
 
 app.post('/flip', tpcontroller.fliplamp, (req, res) => {
   return res.status(201).json('lamp flipped')
