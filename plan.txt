@@ -16,6 +16,8 @@ ON BUTTON CLICK:
 
 
 TO DO EVENTUALLY:
+- change title of web page to leebo.io
+- add a lil png icon for the google tab
 - put personal info in .env (and placeholders in env.example)
 - post this as a new public github repo, so the old branches won't show up with my personal info on them
 

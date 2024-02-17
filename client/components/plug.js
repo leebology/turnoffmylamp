@@ -1,9 +1,7 @@
-import { db, collection, onSnapshot, doc, getDoc, updateDoc } from '../firebase';
+import { db, collection, onSnapshot, doc, getDoc, updateDoc } from '../firebase.js';
 import React, { useState, useEffect, useRef } from 'react';
 
 const Plug = () => {
-
-  console.log('Plug re-rendered!!!!')
 
   const plugCol = collection(db, 'lamp');
   const plugDoc = doc(db, 'lamp', 'R3EoXUVxaRX4Vy1IK0Yo');
@@ -127,7 +125,15 @@ const Plug = () => {
         }
         return res.json();
       })
-      .then((data) => {
+      .then((resdata) => {
+        //IF ALIAS CONTAINED OBSCENITIES
+        console.log('res: ', resdata)
+        if (resdata.obscenity) {
+          console.log(resdata.obscenity)
+          alert('oopsy doopsy bad word detected');
+          if (data.value) handlePlugInfoChange('onButtonDisable', false);
+          else handlePlugInfoChange('offButtonDisable', false);
+        }
         console.log('response from server: ', data);
       })
       .catch((err) => console.log('Error in flip request to server: ', err));

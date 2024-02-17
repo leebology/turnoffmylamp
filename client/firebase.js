@@ -1,16 +1,3 @@
-//brower/client-side needs a path to import. you can't just do " import * from 'firebase' "
-//import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js';
-
-// import {
-//   //getFirestore,
-//   collection,
-//   onSnapshot,
-//   doc,
-//   updateDoc,
-// } from 'https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js';
-
-//import getFirestore from './firebase';
-
 import { getFirestore, collection, onSnapshot, doc, getDoc, updateDoc } from 'firebase/firestore';
 
 import { initializeApp } from 'firebase/app';

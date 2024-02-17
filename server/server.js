@@ -7,7 +7,7 @@ const app = express();
 const path = require('path');
 const tpcontroller = require('./tplink-controller.js');
 const fbcontroller = require('./firebase-controller.js');
-const PORT = 5004;
+const PORT = process.env.PORT || 5004; //process.env.PORT is required by elastic beanstalk i think
 
 const cors = require('cors');
 app.use(cors());

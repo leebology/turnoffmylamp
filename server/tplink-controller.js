@@ -3,6 +3,12 @@ const app = express();
 require('dotenv').config();
 const fbcontroller = require('./firebase-controller.js');
 const cors = require('cors');
+const {
+	RegExpMatcher,
+	TextCensor,
+	englishDataset,
+	englishRecommendedTransformers,
+} = require('obscenity');
 app.use(cors());
 app.use(express.json());
 
@@ -52,11 +58,22 @@ controller.newtoken = async (req, res, next) => {
 
 controller.fliplamp = async (req, res, next) => {
 
-  //let flipReq = req.body.value; //OLD VARIABLE USED TO BE A BOOLEAN. NOW AN OBJECT
   let flipReq = {
     action: req.body.value,
     alias: req.body.alias
   }
+
+  //CHECK IF ALIAS IS AN OBSCENITY
+  const matcher = new RegExpMatcher({
+    ...englishDataset.build(),
+    ...englishRecommendedTransformers,
+  });
+  if (matcher.hasMatch(flipReq.alias)) {
+    console.log('The input text contains profanities.');
+    res.send({obscenity: true});
+    return;
+  }
+
   //console.log('-----FLIP REQUEST TO: ', flipReq, ' at ', new Date()) //OLD
   console.log('-----FLIP REQUEST BY ', flipReq.alias, ' TO ', flipReq.action, ' AT ', new Date())
 

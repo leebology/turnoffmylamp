@@ -47,7 +47,7 @@ const AliasLog = (props) => {
         <ul id='action-log' className={`${isExpanded ? 'expanded' : ''}`}>
           {ActionLog.map((action) => (
             <li key={action.id} className='indiv-action'>
-              <svg width='24' height='24' class='mui-bulb' focusable='false' viewBox='0 0 24 24'>
+              <svg width='24' height='24' className='mui-bulb' focusable='false' viewBox='0 0 24 24'>
                 <circle cx="12" cy="12" r="3" fill={!action.action ? '#000000' : '#f6aa38'} stroke={!action.action ? '#000000' : '#f6aa38'}
                     opacity={!action.action ? 0 : 1}></circle>
                 <path fill={!action.action ? '#a6a6ff' : '#f6aa38'} d="M12 9c1.65 0 3 1.35 3 3s-1.35 3-3 3-3-1.35-3-3 1.35-3 3-3m0-2c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5"></path>
