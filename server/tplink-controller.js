@@ -5,7 +5,6 @@ const fbcontroller = require('./firebase-controller.js');
 const cors = require('cors');
 const {
 	RegExpMatcher,
-	TextCensor,
 	englishDataset,
 	englishRecommendedTransformers,
 } = require('obscenity');
@@ -15,12 +14,11 @@ app.use(express.json());
 const controller = {};
 
 let token = '';
-//const plugId = '80066A2A877483A23D63A993CAA043A12162BC8C';
 const plugId = process.env.PLUG_ID;
 const posturl = 'https://wap.tplinkcloud.com';
 
 
-//get a new token from TP-LINK api
+//get a new token from TP-LINK api. MAKE SURE TO SET YOUR USERNAME/PW/UUID IN THE .ENV FILE
 controller.newtoken = async (req, res, next) => {
   const postBody = {
     method: 'POST',
@@ -29,9 +27,9 @@ controller.newtoken = async (req, res, next) => {
       "method": "login",
       "params": {
          "appType": "Kasa_Android",
-         "cloudUserName": "liam.donaher@gmail.com",
-         "cloudPassword": "WifiOutlet:808",
-         "terminalUUID": "27daa39e-2830-4286-a653-d2fa64bc1a61"
+         "cloudUserName": process.env.CLOUD_USER_NAME,
+         "cloudPassword": process.env.CLOUD_PASSWORD,
+         "terminalUUID": process.env.TERMINAL_UUID,
       }
      }),
   };
@@ -74,7 +72,6 @@ controller.fliplamp = async (req, res, next) => {
     return;
   }
 
-  //console.log('-----FLIP REQUEST TO: ', flipReq, ' at ', new Date()) //OLD
   console.log('-----FLIP REQUEST BY ', flipReq.alias, ' TO ', flipReq.action, ' AT ', new Date())
 
   if (!token) {
@@ -96,12 +93,10 @@ controller.fliplamp = async (req, res, next) => {
   };
 
   try {
-    //console.log('request to TPLINK: ', `${posturl}?token=${token}`, postBody);
     const fetchResponse = await fetch(`${posturl}?token=${token}`, postBody);
     const jsonResponse = await fetchResponse.json();
-    //console.log('### jsonResponse: ', jsonResponse)
 
-    //error_code -20651 for token expired
+    //error_code -20651 for expired token
     if (jsonResponse.error_code === -20651) {
       console.log('expired token')
       // check firebase for the time the last token was taken.
@@ -148,9 +143,8 @@ controller.fliplamp = async (req, res, next) => {
   }
 }
 
-
+//CURRENTLY NOT BEING USED
 controller.lampstatus = async (req, res, next) => {
-  console.log('in controller.lampstatus')
 
   const postBody = {
     method: 'POST',

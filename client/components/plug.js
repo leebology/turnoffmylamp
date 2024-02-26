@@ -1,8 +1,14 @@
-import { db, collection, onSnapshot, doc, getDoc, updateDoc } from '../firebase.js';
+import {
+  db,
+  collection,
+  onSnapshot,
+  doc,
+  getDoc,
+  updateDoc,
+} from '../firebase.js';
 import React, { useState, useEffect, useRef } from 'react';
 
 const Plug = () => {
-
   const plugCol = collection(db, 'lamp');
   const plugDoc = doc(db, 'lamp', 'R3EoXUVxaRX4Vy1IK0Yo');
 
@@ -11,17 +17,17 @@ const Plug = () => {
       const data = await getDoc(plugDoc);
       return data.data().lastflip;
     } catch (error) {
-      console.log('error in fetchLastFlip: ', error)
+      console.log('error in fetchLastFlip: ', error);
     }
   }
 
   //REF for last time the plug was flipped (value coming from firebase)
-  const lastFlipRef = useRef(fetchLastFlip())
+  const lastFlipRef = useRef(fetchLastFlip());
   useEffect(() => {
-    fetchLastFlip().then(x => {
+    fetchLastFlip().then((x) => {
       lastFlipRef.current = x;
     });
-  }, [])
+  }, []);
 
   //STATE
   const [PlugInfo, setPlugInfo] = useState({
@@ -29,14 +35,14 @@ const Plug = () => {
     lastFlipLabel: 'Lamp has been on for:',
     currentLampState: '-',
     onButtonDisable: false,
-    offButtonDisable: false
+    offButtonDisable: false,
   });
   const [aliasInput, setAliasInput] = useState();
 
   const handlePlugInfoChange = (key, value) => {
-      setPlugInfo(prevState => ({
+    setPlugInfo((prevState) => ({
       ...prevState,
-      [key]: value
+      [key]: value,
     }));
   };
 
@@ -73,7 +79,6 @@ const Plug = () => {
     else timeStr += `${seconds} seconds`;
 
     handlePlugInfoChange('lastFlipText', timeStr);
-
   };
 
   //HOW OFTEN THE 'lamp has been on for' TEXT IS REFRESHED
@@ -85,14 +90,13 @@ const Plug = () => {
     return () => clearInterval(intervalId);
   }, []);
 
-
   useEffect(() => {
     const unsubscribe = onSnapshot(plugDoc, (snapshot) => {
       handlePlugInfoChange('lastButtonPress', snapshot.data().lastflip);
       const lampLit = snapshot.data().lit;
       lastFlipRef.current = snapshot.data().lastflip;
       refreshLastFlip();
-      
+
       if (lampLit === 'on') {
         handlePlugInfoChange('lastFlipLabel', 'Lamp has been on for:');
         handlePlugInfoChange('onButtonDisable', true);
@@ -102,9 +106,9 @@ const Plug = () => {
         setTimeout(() => handlePlugInfoChange('onButtonDisable', false), 0);
         handlePlugInfoChange('offButtonDisable', true);
       }
-      handlePlugInfoChange('currentLampState', lampLit)
+      handlePlugInfoChange('currentLampState', lampLit);
 
-      console.log('finished onSnapshot')
+      console.log('finished onSnapshot');
     });
     return () => unsubscribe();
   }, []);
@@ -127,9 +131,9 @@ const Plug = () => {
       })
       .then((resdata) => {
         //IF ALIAS CONTAINED OBSCENITIES
-        console.log('res: ', resdata)
+        console.log('res: ', resdata);
         if (resdata.obscenity) {
-          console.log(resdata.obscenity)
+          console.log(resdata.obscenity);
           alert('oopsy doopsy bad word detected');
           if (data.value) handlePlugInfoChange('onButtonDisable', false);
           else handlePlugInfoChange('offButtonDisable', false);
@@ -142,28 +146,50 @@ const Plug = () => {
   return (
     <div>
       {/* <h3>smart outlet</h3> */}
+      <div></div>
       <div>
-
+        <button
+          className='lampbutton'
+          disabled={PlugInfo.onButtonDisable}
+          onClick={() => asyncFlip({ value: true, alias: aliasInput })}
+        >
+          turn on my lamp
+        </button>
+        <button
+          className='lampbutton'
+          disabled={PlugInfo.offButtonDisable}
+          onClick={() => asyncFlip({ value: false, alias: aliasInput })}
+        >
+          turn off my lamp
+        </button>
       </div>
-      <div>
-        <button className="lampbutton" disabled={PlugInfo.onButtonDisable} onClick={() => asyncFlip({ value: true, alias: aliasInput})}>turn on my lamp</button>
-        <button className="lampbutton" disabled={PlugInfo.offButtonDisable} onClick={() => asyncFlip({ value: false, alias: aliasInput})}>turn off my lamp</button>
-      </div>
-      <br/>
+      <br />
       <div>
         <form>
-          <label className="datalabel">enter name for action log?</label>
-          <input id="alias-input" onChange={e => setAliasInput(e.target.value)}></input>
+          <label className='datalabel'>enter name for action log?</label>
+          <input
+            id='alias-input'
+            onChange={(e) => setAliasInput(e.target.value)}
+          ></input>
         </form>
         <br />
-        <div className="datalabel">{PlugInfo.lastFlipLabel}</div><div className="lastflip">{PlugInfo.lastFlipText}</div>
-        <br/>
-        <div className="datalabel">Current state: </div> <div className="currentlampstate" style={{ color: `${PlugInfo.currentLampState === 'on' ? '#f6aa38' : '#a6a6ff'}` }}>{PlugInfo.currentLampState}</div>
-        
-        
+        <div className='datalabel'>{PlugInfo.lastFlipLabel}</div>
+        <div className='lastflip'>{PlugInfo.lastFlipText}</div>
+        <br />
+        <div className='datalabel'>Current state: </div>{' '}
+        <div
+          className='currentlampstate'
+          style={{
+            color: `${
+              PlugInfo.currentLampState === 'on' ? '#f6aa38' : '#a6a6ff'
+            }`,
+          }}
+        >
+          {PlugInfo.currentLampState}
+        </div>
       </div>
     </div>
   );
-}
+};
 
 export default Plug;

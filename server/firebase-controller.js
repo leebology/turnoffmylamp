@@ -27,11 +27,10 @@ const controller = {};
 
 controller.token = '';
 
-//do these need to be declared as variables?
+//the random string of characters are the DOCUMENT NAMES in my firebase database
 lampRef = doc(db, 'lamp', 'R3EoXUVxaRX4Vy1IK0Yo');
 interactionsRef = collection(db, 'lamp/R3EoXUVxaRX4Vy1IK0Yo/interactions')
 tokenRef = doc(db, 'token', 'KySruQOo92Kmx9L1jjoa');
-//let token = '';
 
 controller.fliplamp = async (req, res, next) => {
   req.action ? litState = 'on' : litState = 'off'
